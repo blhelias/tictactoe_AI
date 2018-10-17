@@ -1,4 +1,4 @@
-turnNb = 0;
+roundNb = 0;
 
 function gridData() {
 	var data = new Array();
@@ -35,26 +35,22 @@ function gridData() {
 	}
 	return data;
 }
-// TODO:
-function resetGame(){
-	pass;
-}
 
-gridData = gridData();	
+boardData = gridData();	
 // I like to log the data to the console for quick debugging
-console.log(gridData);
+console.log(boardData);
 
-var grid = d3.select("#grid")
+grid = d3.select("#grid")
 	.append("svg")
 	.attr("width","301px")
 	.attr("height","301px");
 
-var row = grid.selectAll(".row")
-	.data(gridData)
+row = grid.selectAll(".row")
+	.data(boardData)
 	.enter().append("g")
 	.attr("class", "row");
 
-var column = row.selectAll(".square")
+column = row.selectAll(".square")
 	.data(function(d) { return d; })
 	.enter().append("rect")
 	.attr("class","square")
@@ -66,17 +62,17 @@ var column = row.selectAll(".square")
 	.style("stroke", "#222")
 	.on('click', function(d) {
 		// check if it player 1 turn
-		if (turnNb%2==0) {
+		if (roundNb%2==0) {
 			// check number of turns
-			if(turnNb>=9){
+			if(roundNb>=9){
 				// check if the div is empty to display the result
 				if ($('#result').is(':empty')){		
 					document.querySelector("#result").innerHTML = "<h1> Draw </h1>";
-					$("#result").css({"color":"grey",
-									"text-align":"center"});
+					$("#result").css({"color":"grey"});
 				}
 			}
 			// check if you click on an empty square
+			console.log(d3.select(this)._groups[0][0].__data__.value);
 			if(d3.select(this)._groups[0][0].__data__.value==0){
 				d3.select(this).style("fill","#2C93E8");
 				var posClickX = d3.select(this)._groups[0][0].__data__.x;
@@ -86,15 +82,15 @@ var column = row.selectAll(".square")
 				posClickY = posClickY > 100 ? Math.round(posClickY/100) : 0;
 
 				// update the grid according to player 1 click
-				gridData = updateGrid(gridData, posClickY, posClickX, "player1");
-
+				boardData = updateGrid(boardData, posClickY, posClickX, "player1");
+				d3.select(this)._groups[0][0].__data__.value=1;
 				//print player and grid 
 				console.log("player1");
-				console.log(gridData);
+				console.log(boardData);
 
 				// after human clicks, send the grid to the backend (POST)
-				gridData = sendPostToIA(gridData);
-				turnNb++;
+				boardData = sendPostToIA(boardData);
+				roundNb++;
 			}
 		}
 	});
@@ -115,10 +111,10 @@ function sendPostToIA(data){
 			var response = JSON.parse(data);
 			console.log("player2");
 			console.log(response.data);
-			gridData = updateSVG(response.id, response.status, "red");
+			boardData = updateSVG(response.id, response.status, "red");
 		}
 	});
-	return gridData
+	return boardData
 }
 
 function updateGrid(data, posx, posy, joueur){
@@ -139,49 +135,66 @@ function updateSVG(id, status, color){
 	// freeze SVG
 
 	// check number of turn
-	if(turnNb>=9){
+	if(roundNb>=9){
 		document.querySelector("#result").innerHTML = "<h1> Draw </h1>";
 		$("#result").css({"color":"grey",
 						  "text-align":"center"});
 	}else{
-		if(turnNb%2==1 || status==10 || status==-10){
-			turnNb ++;
+		if(roundNb%2==1 || status==10 || status==-10){
+			roundNb ++;
 			grid.selectAll("rect").each(function(d, i){
 				if(d.id==id){
 					d3.select(this).style("fill", color);
+					d3.select(this)._groups[0][0].__data__.value = 2;
 				}
 			});
 		}
-		// TODO: clean this!
-		if(id<=2){
-			clickX = 0;
-			clickY = id;
-		}else if (id<=5){
-			clickX = 1;
-			clickY = id-3;
-		}else{
-			clickX = 2;
-			clickY = id-6;
-		}
 
-		gridData = updateGrid(gridData, clickX, clickY, "player2");
+		clickX = Math.floor(id/3);
+		clickY = id%3
+
+		boardData = updateGrid(boardData, clickX, clickY, "player2");
 		if ($('#result').is(':empty')){		
 			if(status==-10){
 				document.querySelector("#result").innerHTML = "<h1> Blue player Wins ! </h1>";
-				$("#result").css({"color":"#2C93E8",
-								  "text-align":"center"});
+				$("#result").css({"color":"#2C93E8"});
 			}
 			else if(status==10){
 				document.querySelector("#result").innerHTML = "<h1> Red player Wins !!! </h1>";
-				$("#result").css({"color":"red",
-								  "text-align":"center"});
+				$("#result").css({"color":"red"});
 			}
-			else if(turnNb>=8){
-				document.querySelector("#result").innerHTML = "<h1> fin de partie : égalité</h1>";
-				$("#result").css({"color":"grey",
-								  "text-align":"center"});
+			else if(roundNb>=8){
+				document.querySelector("#result").innerHTML = "<h1> It's a draw !</h1>";
+				$("#result").css({"color":"grey"});
 			}
 		}
-		return gridData;
+		return boardData;
 	}
 }
+
+function resetGame(){
+	// empty grid
+	boardData = gridData();
+	// reset roundNB
+	roundNb = 0;
+	// empty svg (all white cases)
+	document.querySelector("#result").innerHTML = "";
+	return [boardData, roundNb]
+}
+
+// reset the game
+$(document).ready(function(){
+    $('#btn').click(function() {
+		reset = resetGame()
+		boardData = reset[0]
+		console.log(boardData);
+		roundNb = reset[1]
+		console.log(roundNb)
+		grid.selectAll("rect").each(function(d, i){
+			d3.select(this).style("fill", "white");
+			d3.select(this)._groups[0][0].__data__.value = 0;
+		});
+    });
+});
+
+

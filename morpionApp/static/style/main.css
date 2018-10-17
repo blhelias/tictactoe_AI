@@ -33,5 +33,22 @@ li a:hover {
 
 svg{
     display: block;
-    margin: auto
+    margin: auto;
+}
+
+#result{
+    text-align: center;
+}
+
+#btn{
+    display: block;
+    margin: auto;
+    margin-top: 20px;
+    border-radius:50%;
+    height: 100px;
+    width: 100px;
+    border: 1px solid green;
+    background-color: green;
+    color: white;
+    font-size: 17px;
 }

@@ -93,7 +93,7 @@ def minimax(new_board: List[int], player: int):
     return moves[best_move]
 
 def reformat_response_board(board: List[int], choice):
-    y, x = choice // 3, choice % 3
+    x, y = choice // 3, choice % 3
     board[x][y]['value'] = 2
     return board
 
