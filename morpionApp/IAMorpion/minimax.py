@@ -4,7 +4,7 @@ Created on Wed Oct 17 10:53:53 2018
 
 @author: brieuc.lhelias
 """
-from typing import List
+from typing import List, Dict
 
 hu_player = 1
 ai_player = 2
@@ -19,7 +19,7 @@ def empty_indexes(board: List[int]) -> List[int]:
             res.append(count) 
     return res
 
-def check_win(board: List[int], player: int):
+def check_win(board: List[int], player: int) -> bool:
     l1 = [board[0], board[1], board[2]]
     l2 = [board[3], board[4], board[5]]
     l3 = [board[6], board[7], board[8]]
@@ -36,7 +36,7 @@ def check_win(board: List[int], player: int):
         
     return False
 
-def minimax(new_board: List[int], player: int):
+def minimax(new_board: List[int], player: int) -> Dict:
     avail_spots = empty_indexes(new_board)
     # check for the terminal states such as win, lose, and tie
     # and return a value accordingly
@@ -92,12 +92,12 @@ def minimax(new_board: List[int], player: int):
                 
     return moves[best_move]
 
-def reformat_response_board(board: List[int], choice):
+def reformat_response_board(board: List[int], choice) -> List[int]:
     x, y = choice // 3, choice % 3
     board[x][y]['value'] = 2
     return board
 
-def convert_requested_board(board: List[int]):
+def convert_requested_board(board: List[int]) -> List[int]:
     res = []
     for i in range(3):
         for j in range(3):

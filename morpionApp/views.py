@@ -30,4 +30,4 @@ def payload(board):
     payloads["data"] = board
     payloads["id"] = index
     payloads["status"] = score
-    return(payloads)
+    return payloads
