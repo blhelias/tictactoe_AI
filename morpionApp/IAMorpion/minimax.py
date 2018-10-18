@@ -42,7 +42,7 @@ def minimax(new_board: List[int], player: int) -> Dict:
     # and return a value accordingly
     if check_win(new_board, hu_player):
         return {"score": -10}
-    
+
     elif check_win(new_board, ai_player):
         return {"score": 10}
     
@@ -71,14 +71,14 @@ def minimax(new_board: List[int], player: int) -> Dict:
         # reset the spot to empty
         new_board[avail_spots[i]] = 0
         # push the object to the array
-        
+
         moves.append(move)
 
     # if it is the computer's turn, loop over the moves and
     # choose the move with the highest score
     if player == ai_player:
         best_score = -10000
-    
+
         for i in range(len(moves)):
             if moves[i]["score"] > best_score:
                 best_score = moves[i]["score"]
@@ -89,7 +89,7 @@ def minimax(new_board: List[int], player: int) -> Dict:
             if moves[i]["score"] < best_score:
                 best_score = moves[i]["score"]
                 best_move = i
-                
+
     return moves[best_move]
 
 def reformat_response_board(board: List[int], choice) -> List[int]:
@@ -111,7 +111,7 @@ def main(requested_board: List[int]) -> List[int]:
     choice = result["index"]
     data = reformat_response_board(requested_board, choice)
     return data, result["index"], result["score"]
-    
+
 if __name__ == "__main__":
     ###########################################################################
     #TEST

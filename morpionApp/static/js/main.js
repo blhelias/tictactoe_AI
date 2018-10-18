@@ -1,5 +1,5 @@
 roundNb = 0;
-
+status = 0;
 function gridData() {
 	var data = new Array();
 	var xpos = 1; //starting xpos and ypos at 1 so the stroke will show when we make the grid below
@@ -42,8 +42,8 @@ console.log(boardData);
 
 grid = d3.select("#grid")
 	.append("svg")
-	.attr("width","301px")
-	.attr("height","301px");
+	.attr("width","305px")
+	.attr("height","305px");
 
 row = grid.selectAll(".row")
 	.data(boardData)
@@ -77,7 +77,7 @@ column = row.selectAll(".square")
 				d3.select(this).style("fill","#2C93E8");
 				var posClickX = d3.select(this)._groups[0][0].__data__.x;
 				var posClickY = d3.select(this)._groups[0][0].__data__.y;
-				
+
 				posClickX = posClickX > 100 ? Math.round(posClickX/100) : 0;
 				posClickY = posClickY > 100 ? Math.round(posClickY/100) : 0;
 
@@ -130,7 +130,6 @@ function updateGrid(data, posx, posy, joueur){
 function updateSVG(id, status, color){
 	var clickX;
 	var clickY;
-
 	// if the game is over --> status = 1 (player1) or 2(player2) or -1 (draw)
 	// freeze SVG
 
@@ -149,7 +148,7 @@ function updateSVG(id, status, color){
 				}
 			});
 		}
-
+		// convert id to (x, y)
 		clickX = Math.floor(id/3);
 		clickY = id%3
 

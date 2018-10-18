@@ -26,7 +26,6 @@ def sendData(request):
 def payload(board):
     payloads = {}
     board, index, score = minimax.main(board)
-    print(board, index, score)
     payloads["data"] = board
     payloads["id"] = index
     payloads["status"] = score
